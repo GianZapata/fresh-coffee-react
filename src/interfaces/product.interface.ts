@@ -1,7 +1,10 @@
 export interface IProduct {
-  categoryId: number;
   id: number;
-  image: string;
   name: string;
   price: number;
+  image: string;
+  available: boolean;
+  category_id: number;
+  created_at?: string;
+  updated_at: string;
 }

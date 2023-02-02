@@ -4,7 +4,6 @@ import { Sidebar, Summary } from '../components/layouts/main';
 import { useContext } from 'react';
 import { QuioscoContext } from '../context/quiosco/QuioscoContext';
 import { ModalProduct } from '../components/pages/home/ModalProduct';
-
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

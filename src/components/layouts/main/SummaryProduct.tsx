@@ -10,7 +10,7 @@ interface Props {
 export const SummaryProduct: FC<Props> = ({ product }) => {
   const { id, name, price, quantity } = product;
 
-  const { onShowProductModal } = useContext(QuioscoContext);
+  const { showProductModal } = useContext(QuioscoContext);
   const { removeProductInCart } = useContext(CartContext);
 
   return (
@@ -30,7 +30,7 @@ export const SummaryProduct: FC<Props> = ({ product }) => {
         <button
           type="button"
           className="bg-sky-700 p-2 text-white rounded-md font-bold uppercase shadow-md text-center"
-          onClick={() => onShowProductModal(id)}
+          onClick={() => showProductModal(id)}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"

@@ -1,8 +1,10 @@
 import { Category } from './Category';
-import { initialData } from '../../../data/seed-data';
+import { QuioscoContext } from '../../../context';
+import { useContext } from 'react';
 
 export const Sidebar = () => {
-  const categories = initialData.categories;
+  const { categories } = useContext(QuioscoContext);
+
   return (
     <aside className="md:w-72">
       <div className="p-4">
@@ -18,7 +20,7 @@ export const Sidebar = () => {
       <div className="my-5 px-5">
         <button
           type="button"
-          className="text-center bg-red-500 w-full p-3 font-bold text-white rounded-md truncate"
+          className="text-center bg-red-500 hover:bg-red-800 w-full p-3 font-bold text-white rounded-full transition duration-300"
         >
           Cancelar orden
         </button>

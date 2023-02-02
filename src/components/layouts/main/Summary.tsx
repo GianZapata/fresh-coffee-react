@@ -32,7 +32,7 @@ export const Summary = () => {
         <div className="mt-5">
           <button
             type="submit"
-            className={`w-full text-white font-bold py-2 px-4 rounded uppercase transition duration-200 ease-in-out ${
+            className={`w-full text-white font-bold py-2 px-4 rounded-full uppercase transition duration-200 ease-in-out ${
               isCartEmpty
                 ? 'bg-indigo-100'
                 : 'bg-indigo-600 hover:bg-indigo-800'

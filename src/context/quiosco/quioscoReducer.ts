@@ -6,23 +6,31 @@ type QuioscoActionType =
   | { type: '[Quiosco] - GetProducts' }
   | { type: '[Quiosco] - SetCategories'; payload: ICategory[] }
   | { type: '[Quiosco] - SetCurrentCategory'; payload: ICategory }
+  | { type: '[Quiosco] - SetCurrentProduct'; payload: IProduct }
+  | { type: '[Quiosco] - SetFilteredProducts'; payload: IProduct[] }
+  | { type: '[Quiosco] - SetHideProductModal' }
   | { type: '[Quiosco] - SetProducts'; payload: IProduct[] }
-  | { type: '[Quiosco] - SetShowProductModal'; payload: IProduct }
-  | { type: '[Quiosco] - SetHideProductModal' };
+  | { type: '[Quiosco] - SetShowProductModal'; payload: IProduct };
 
 export const quioscoReducer = (
   state: QuioscoState,
   action: QuioscoActionType,
 ): QuioscoState => {
   switch (action.type) {
-    case '[Quiosco] - GetProducts':
-      return {
-        ...state,
-      };
     case '[Quiosco] - SetProducts':
       return {
         ...state,
         products: action.payload,
+      };
+    case '[Quiosco] - SetFilteredProducts':
+      return {
+        ...state,
+        filteredProducts: action.payload,
+      };
+    case '[Quiosco] - SetCurrentProduct':
+      return {
+        ...state,
+        currentProduct: action.payload,
       };
     case '[Quiosco] - SetCategories':
       return {

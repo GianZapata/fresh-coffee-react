@@ -1,30 +1,32 @@
 import { FC, PropsWithChildren, useEffect, useReducer } from 'react';
 import { QuioscoContext, quioscoReducer } from './';
 import { IProduct, ICategory } from '../../interfaces';
-import { initialData } from '../../data/seed-data';
+import { dbCategories } from '../../database';
 
 export interface QuioscoState {
   categories: ICategory[];
   currentCategory: ICategory | null;
   currentProduct: IProduct | null;
+  filteredProducts: IProduct[];
   products: IProduct[];
   showModal: boolean;
 }
 
 const QUIOSCO_INITIAL_STATE: QuioscoState = {
-  categories: initialData.categories,
+  categories: [],
   currentCategory: null,
   currentProduct: null,
-  products: initialData.products,
+  filteredProducts: [],
+  products: [],
   showModal: false,
 };
 
 export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(quioscoReducer, QUIOSCO_INITIAL_STATE);
 
-  const onShowProductModal = (id: number) => {
+  const showProductModal = (id: number) => {
     if (!id) return;
-    const product = initialData.products.find((product) => product.id === id);
+    const product = state.filteredProducts.find((product) => product.id === id);
     if (!product) return;
     dispatch({
       type: '[Quiosco] - SetShowProductModal',
@@ -32,51 +34,73 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
     });
   };
 
-  const onHideProductModal = () => {
+  const hideProductModal = () => {
     dispatch({
       type: '[Quiosco] - SetHideProductModal',
     });
   };
 
-  const onSetCurrentCategory = (category: ICategory) => {
+  const getCategories = async (): Promise<void> => {
+    try {
+      const categories = await dbCategories.findAll();
+      dispatch({
+        type: '[Quiosco] - SetCategories',
+        payload: categories,
+      });
+    } catch (error) {}
+  };
+
+  const setCurrentCategory = (category: ICategory) => {
     dispatch({
       type: '[Quiosco] - SetCurrentCategory',
       payload: category,
     });
   };
 
-  const onFilterProductsByCategory = (category: ICategory) => {
-    const initialProducts = initialData.products;
-
-    const products = initialProducts.filter(
-      (product) => product.categoryId === category.id,
-    );
-
+  const setProducts = (products: IProduct[]) => {
     dispatch({
       type: '[Quiosco] - SetProducts',
       payload: products,
     });
   };
 
+  const filterProductsByCategory = (category: ICategory) => {
+    const filteredProducts = state.products.filter(
+      (product) => product.category_id === category.id,
+    );
+    dispatch({
+      type: '[Quiosco] - SetFilteredProducts',
+      payload: filteredProducts,
+    });
+  };
+
   useEffect(() => {
-    onSetCurrentCategory(state.categories[0]);
+    getCategories();
   }, []);
 
   useEffect(() => {
+    if (state.categories.length > 0) {
+      setCurrentCategory(state.categories[0]);
+    }
+  }, [state.categories]);
+
+  useEffect(() => {
     if (state.currentCategory) {
-      onFilterProductsByCategory(state.currentCategory);
+      filterProductsByCategory(state.currentCategory);
     }
   }, [state.currentCategory]);
 
   return (
     <QuioscoContext.Provider
       value={{
+        /** State */
         ...state,
+
         /** Methods */
-        onSetCurrentCategory,
-        onFilterProductsByCategory,
-        onShowProductModal,
-        onHideProductModal,
+        setProducts,
+        setCurrentCategory,
+        showProductModal,
+        hideProductModal,
       }}
     >
       {children}

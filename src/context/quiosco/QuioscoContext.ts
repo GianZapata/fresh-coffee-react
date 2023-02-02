@@ -2,16 +2,17 @@ import { createContext } from 'react';
 import { IProduct, ICategory } from '../../interfaces';
 
 interface ContextProps {
-  showModal: boolean;
-  currentProduct: IProduct | null;
-  currentCategory: ICategory | null;
-  products: IProduct[];
   categories: ICategory[];
+  currentCategory: ICategory | null;
+  currentProduct: IProduct | null;
+  products: IProduct[];
+  filteredProducts: IProduct[];
+  showModal: boolean;
 
-  onSetCurrentCategory: (category: ICategory) => void;
-  onFilterProductsByCategory: (category: ICategory) => void;
-  onShowProductModal: (id: number) => void;
-  onHideProductModal: () => void;
+  hideProductModal: () => void;
+  setCurrentCategory: (category: ICategory) => void;
+  showProductModal: (id: number) => void;
+  setProducts: (products: IProduct[]) => void;
 }
 
 export const QuioscoContext = createContext({} as ContextProps);

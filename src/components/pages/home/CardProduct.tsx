@@ -1,14 +1,14 @@
 import { FC, useContext } from 'react';
-import { SeedProduct } from '../../../data/seed-data';
 import { formatPrice } from '../../../helpers/format-price';
 import { QuioscoContext } from '../../../context';
+import { IProduct } from '../../../interfaces';
 
 interface ProductProps {
-  product: SeedProduct;
+  product: IProduct;
 }
 
 export const CardProduct: FC<ProductProps> = ({ product }) => {
-  const { onShowProductModal } = useContext(QuioscoContext);
+  const { showProductModal } = useContext(QuioscoContext);
   const { id, image, name, price } = product;
 
   return (
@@ -26,7 +26,7 @@ export const CardProduct: FC<ProductProps> = ({ product }) => {
         <button
           type="button"
           className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full mt-5 w-full uppercase  tracking-widest"
-          onClick={() => onShowProductModal(id)}
+          onClick={() => showProductModal(id)}
         >
           Agregar
         </button>

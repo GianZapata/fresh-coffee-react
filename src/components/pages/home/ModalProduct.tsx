@@ -5,7 +5,7 @@ import { ICartProduct } from '../../../interfaces';
 import { ProductCounter } from './ProductCounter';
 
 export const ModalProduct = () => {
-  const { currentProduct, onHideProductModal } = useContext(QuioscoContext);
+  const { currentProduct, hideProductModal } = useContext(QuioscoContext);
   const { addProductToCart, cart } = useContext(CartContext);
 
   if (!currentProduct) return null;
@@ -19,7 +19,7 @@ export const ModalProduct = () => {
 
   const onAddProduct = () => {
     addProductToCart(tempCartProduct);
-    onHideProductModal();
+    hideProductModal();
   };
 
   const onUpdateQuantity = ({ count }: { count: number }) => {
@@ -48,7 +48,7 @@ export const ModalProduct = () => {
       </div>
       <div className="md:w-2/3">
         <div className="flex justify-end">
-          <button onClick={onHideProductModal}>
+          <button onClick={hideProductModal}>
             <svg
               xmlns="http://www.w3.org/2000/svg"
               fill="none"
