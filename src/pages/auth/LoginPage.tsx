@@ -1,12 +1,55 @@
 import { Link } from 'react-router-dom';
+import { useState, useRef } from 'react';
+import { useAuth } from '../../hooks/useAuth';
+import { Alert } from '../../components/ui/Alert';
+import { AuthErrorResponse } from '../../interfaces/auth.interface';
 
 export const LoginPage = () => {
+  const { loginUser } = useAuth({ middleware: 'guest', redirectTo: '/' });
+
+  const [errors, setErrors] = useState<AuthErrorResponse>();
+
+  const emailRef = useRef<HTMLInputElement>(null);
+  const passwordRef = useRef<HTMLInputElement>(null);
+
+  const onLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    const email = emailRef.current?.value.trim();
+    const password = passwordRef.current?.value.trim();
+
+    if (!email || !password) {
+      setErrors({
+        message: 'Los campos correo y contraseña son requeridos',
+        errors: {
+          email: email ? [] : ['El campo email es requerido'],
+          password: password ? [] : ['El campo password es requerido'],
+        },
+      });
+      return;
+    }
+
+    const loginValues = {
+      email,
+      password,
+    };
+
+    loginUser(loginValues);
+  };
+
   return (
     <div>
-      <h1 className="text-4xl font-black">Crea tu cuenta</h1>
+      <h1 className="text-4xl font-black">Iniciar Sesión</h1>
       <p>Para crear un pedido debes iniciar sesión</p>
       <div className="bg-white shadow-md rounded-md mt-10 px-5 py-10">
-        <form className="space-y-5">
+        <form onSubmit={onLogin} className="space-y-5" noValidate>
+          {errors && errors.errors
+            ? Object.keys(errors.errors).map((error) => (
+                <Alert key={error}>
+                  {errors.errors[error as keyof typeof errors.errors]}
+                </Alert>
+              ))
+            : null}
           <div>
             <label className="text-slate-800" htmlFor="email">
               Correo:
@@ -17,6 +60,8 @@ export const LoginPage = () => {
               name="email"
               className="mt-2 block p-3 bg-gray-50 w-full outline-none"
               placeholder="Tu Correo"
+              ref={emailRef}
+              defaultValue="correo@correo.com"
             />
           </div>
           <div>
@@ -29,6 +74,8 @@ export const LoginPage = () => {
               name="password"
               className="mt-2 block p-3 bg-gray-50 w-full outline-none"
               placeholder="Tu Contraseña"
+              ref={passwordRef}
+              defaultValue="Abc123456!"
             />
           </div>
           <input
@@ -41,7 +88,7 @@ export const LoginPage = () => {
           <p className="text-sm text-gray-500">
             ¿No tienes una cuenta?{' '}
             <Link
-              to="/auth/register"
+              to="/auth/signup"
               className="text-indigo-600 hover:underline cursor-pointer"
             >
               Crea una
