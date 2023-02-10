@@ -18,6 +18,7 @@ export const ModalProduct = () => {
   });
 
   const onAddProduct = () => {
+    if (tempCartProduct.quantity === 0) return;
     addProductToCart(tempCartProduct);
     hideProductModal();
   };
@@ -81,7 +82,7 @@ export const ModalProduct = () => {
 
         <button
           type="button"
-          className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full mt-5 uppercase tracking-wide transition duration-200"
+          className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full mt-5 uppercase transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
           onClick={onAddProduct}
         >
           {productInCart ? 'Guardar cambios' : 'Agregar al pedido'}

@@ -5,12 +5,9 @@ interface ContextProps {
   isLoggedIn: boolean;
   user: IUser | null;
 
-  loginUser: (userValues: {
-    email: string;
-    password: string;
-  }) => Promise<boolean>;
+  loginUser: (email: string, password: string) => Promise<boolean>;
   logoutUser: () => void;
-  registerUser: (userValues: {
+  signupUser: (userValues: {
     name: string;
     email: string;
     password: string;

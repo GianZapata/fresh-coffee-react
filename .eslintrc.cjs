@@ -16,7 +16,7 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts'],
+  ignorePatterns: ['.eslintrc.cjs', 'vite.config.ts', 'tailwind.config.cjs'],
   rules: {
     "react/jsx-uses-react": "off",
     "react/react-in-jsx-scope": "off",

@@ -12,7 +12,7 @@ export const CardProduct: FC<ProductProps> = ({ product }) => {
   const { id, image, name, price } = product;
 
   return (
-    <div className="border p-3 shadow bg-white">
+    <div className="border p-3 shadow bg-white opacity-90 hover:opacity-100 transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 animate-fade-in">
       <img
         alt={`Imagen ${name}`}
         src={`/img/${image}.jpg`}
@@ -25,7 +25,7 @@ export const CardProduct: FC<ProductProps> = ({ product }) => {
         </p>
         <button
           type="button"
-          className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full mt-5 w-full uppercase  tracking-widest"
+          className="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-2 px-4 rounded-full mt-5 w-full uppercase transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 "
           onClick={() => showProductModal(id)}
         >
           Agregar

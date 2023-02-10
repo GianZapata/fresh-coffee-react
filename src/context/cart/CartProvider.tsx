@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useReducer, useEffect } from 'react';
+import { toast } from 'react-toastify';
 import { CartContext, cartReducer } from './';
 import { ICartProduct } from '../../interfaces';
-import { toast } from 'react-toastify';
 
 export interface CartState {
   cart: ICartProduct[];

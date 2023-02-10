@@ -1,8 +1,7 @@
-import { FC, PropsWithChildren, useReducer } from 'react';
+import { FC, PropsWithChildren, useReducer, useEffect } from 'react';
 import { AuthContext, authReducer } from './';
 import freshCoffeeApi from '../../api/freshApi';
 import { AuthResponse, IUser } from '../../interfaces';
-import {} from '../../interfaces/user.interface';
 
 export interface AuthState {
   isLoggedIn: boolean;
@@ -10,64 +9,93 @@ export interface AuthState {
 }
 
 const AUTH_INITIAL_STATE: AuthState = {
-  isLoggedIn: false,
-  user: null,
+  isLoggedIn: !!localStorage.getItem('access_token'),
+  user: JSON.parse(localStorage.getItem('user') || 'null') || null,
 };
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
-  const loginUser = async (userValues: {
-    email: string;
-    password: string;
-  }): Promise<boolean> => {
+  const accessToken = localStorage.getItem('access_token');
+
+  const loginUser = async (
+    email: string,
+    password: string,
+  ): Promise<boolean> => {
     try {
       const { data } = await freshCoffeeApi.post<AuthResponse>(
-        '/auth/login',
-        userValues,
+        '/api/auth/login',
+        { email, password },
       );
       const { token, user } = data;
+      localStorage.setItem('access_token', token);
+      localStorage.setItem('user', JSON.stringify(user));
       dispatch({ type: '[Auth] - Login', payload: user });
       return true;
     } catch (error) {
-      console.log('🚀 ~ file: AuthProvider.tsx ~ line 42 ~ error', error);
       return false;
     }
   };
 
-  const registerUser = async (userValues: {
+  const signupUser = async (userValues: {
     name: string;
     email: string;
     password: string;
-  }): Promise<{ hasError: boolean; message?: string }> => {
+  }): Promise<{ hasError: boolean; errors?: { [key: string]: string[] } }> => {
     try {
       const { data } = await freshCoffeeApi.post<AuthResponse>(
         '/auth/signup',
         userValues,
       );
       const { token, user } = data;
-      // Cookies.set('token', token as string);
+      localStorage.setItem('access_token', token);
       dispatch({ type: '[Auth] - Login', payload: user });
       return {
         hasError: false,
       };
-    } catch (err) {
-      console.log('🚀 ~ file: AuthProvider.tsx ~ line 42 ~ error', err);
-
-      // const { message, error } = handleAxiosError(err);
-      // if (error !== 'unknown') {
-      //   return { hasError: true, message };
-      // }
-    }
+    } catch (err) {}
     return {
       hasError: true,
-      message: 'No se pudo crear el usuario - intente de nuevo',
+      errors: {
+        custom: ['Hubo un error al crear el usuario'],
+      },
     };
   };
 
-  const logoutUser = () => {
-    console.log('🚀 ~ file: AuthProvider.tsx ~ line 42 ~ logoutUser');
+  const logoutUser = async () => {
+    try {
+      await freshCoffeeApi.post(`/api/auth/logout`, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+      dispatch({ type: '[Auth] - Logout' });
+    } catch (error) {}
   };
+
+  const checkToken = async () => {
+    try {
+      const { data } = await freshCoffeeApi.get<IUser>('/api/auth/user', {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+      localStorage.setItem('user', JSON.stringify(data));
+      dispatch({ type: '[Auth] - Login', payload: data });
+    } catch (error) {
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user');
+      dispatch({ type: '[Auth] - Logout' });
+    }
+  };
+
+  useEffect(() => {
+    if (accessToken) {
+      checkToken();
+    }
+  }, [accessToken]);
 
   return (
     <AuthContext.Provider
@@ -76,7 +104,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         // Methods
         loginUser,
         logoutUser,
-        registerUser,
+        signupUser,
       }}
     >
       {children}

@@ -65,6 +65,7 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
   };
 
   const filterProductsByCategory = (category: ICategory) => {
+    if (!category) return;
     const filteredProducts = state.products.filter(
       (product) => product.category_id === category.id,
     );
@@ -85,10 +86,10 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
   }, [state.categories]);
 
   useEffect(() => {
-    if (state.currentCategory) {
+    if (state.currentCategory && state.products.length > 0) {
       filterProductsByCategory(state.currentCategory);
     }
-  }, [state.currentCategory]);
+  }, [state.currentCategory, state.products]);
 
   return (
     <QuioscoContext.Provider

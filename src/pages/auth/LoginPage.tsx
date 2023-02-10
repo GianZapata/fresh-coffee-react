@@ -1,57 +1,82 @@
-import { Link } from 'react-router-dom';
-import { useState, useRef } from 'react';
-import { useAuth } from '../../hooks/useAuth';
-import { Alert } from '../../components/ui/Alert';
-import { AuthErrorResponse } from '../../interfaces/auth.interface';
+import { Link, useNavigate } from 'react-router-dom';
+import { useState, useRef, useContext } from 'react';
+import { AuthContext } from '../../context';
 
 export const LoginPage = () => {
-  const { loginUser } = useAuth({ middleware: 'guest', redirectTo: '/' });
+  const { loginUser } = useContext(AuthContext);
 
-  const [errors, setErrors] = useState<AuthErrorResponse>();
+  const navigate = useNavigate();
+  const lastPath = localStorage.getItem('lastPath') || '/';
+
+  const [errors, setErrors] = useState<{ [key: string]: string[] } | null>();
+  const [isSending, setIsSending] = useState(false);
 
   const emailRef = useRef<HTMLInputElement>(null);
   const passwordRef = useRef<HTMLInputElement>(null);
 
-  const onLogin = (e: React.FormEvent<HTMLFormElement>) => {
+  const onLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setIsSending(true);
+    setErrors(null);
 
     const email = emailRef.current?.value.trim();
     const password = passwordRef.current?.value.trim();
 
     if (!email || !password) {
+      setIsSending(false);
       setErrors({
-        message: 'Los campos correo y contraseña son requeridos',
-        errors: {
-          email: email ? [] : ['El campo email es requerido'],
-          password: password ? [] : ['El campo password es requerido'],
-        },
+        email: ['El campo email es requerido'],
+        password: ['El campo password es requerido'],
       });
+      setTimeout(() => {
+        setErrors(null);
+      }, 3000);
       return;
     }
 
-    const loginValues = {
-      email,
-      password,
-    };
+    const isValidLogin = await loginUser(email, password);
 
-    loginUser(loginValues);
+    if (!isValidLogin) {
+      setIsSending(false);
+      setErrors({
+        email: ['El email o la contraseña son incorrectos'],
+      });
+      setTimeout(() => {
+        setErrors(null);
+      }, 3000);
+      return;
+    }
+    navigate(lastPath, {
+      replace: true,
+    });
   };
 
   return (
     <div>
-      <h1 className="text-4xl font-black">Iniciar Sesión</h1>
-      <p>Para crear un pedido debes iniciar sesión</p>
+      <h1 className="text-4xl font-black text-center">Iniciar Sesión</h1>
+      <p className="text-center text-gray-500 text-sm">
+        Para crear un pedido debes iniciar sesión
+      </p>
       <div className="bg-white shadow-md rounded-md mt-10 px-5 py-10">
         <form onSubmit={onLogin} className="space-y-5" noValidate>
-          {errors && errors.errors
-            ? Object.keys(errors.errors).map((error) => (
-                <Alert key={error}>
-                  {errors.errors[error as keyof typeof errors.errors]}
-                </Alert>
+          {errors && Object.keys(errors).length > 0
+            ? Object.keys(errors).map((error) => (
+                <div
+                  className="flex p-4 mb-4 text-red-800 border-t-4 border-red-300 bg-red-50 "
+                  key={error}
+                >
+                  <ul className="list-disc list-inside">
+                    {errors[error].map((err, i) => (
+                      <li className="text-sm font-medium text-red-700" key={i}>
+                        {err}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
               ))
             : null}
           <div>
-            <label className="text-slate-800" htmlFor="email">
+            <label className="text-slate-800 font-bold" htmlFor="email">
               Correo:
             </label>
             <input
@@ -65,7 +90,7 @@ export const LoginPage = () => {
             />
           </div>
           <div>
-            <label className="text-slate-800" htmlFor="password">
+            <label className="text-slate-800 font-bold" htmlFor="password">
               Contraseña:
             </label>
             <input
@@ -78,11 +103,41 @@ export const LoginPage = () => {
               defaultValue="Abc123456!"
             />
           </div>
-          <input
+          <button
             type="submit"
-            value="Iniciar Sesión"
-            className="bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold cursor-pointer rounded-md transition duration-300"
-          />
+            className={`flex justify-center items-center bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold  rounded-md transition duration-300 ${
+              isSending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            }`}
+            disabled={isSending}
+          >
+            {isSending ? (
+              <>
+                <svg
+                  className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                >
+                  <circle
+                    className="opacity-25"
+                    cx="12"
+                    cy="12"
+                    r="10"
+                    stroke="currentColor"
+                    strokeWidth="4"
+                  ></circle>
+                  <path
+                    className="opacity-75"
+                    fill="currentColor"
+                    d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                  ></path>
+                </svg>
+                Iniciando Sesión...
+              </>
+            ) : (
+              <>Iniciar Sesión</>
+            )}
+          </button>
         </form>
         <div className="mt-5">
           <p className="text-sm text-gray-500">

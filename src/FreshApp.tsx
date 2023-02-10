@@ -1,9 +1,9 @@
 import { RouterProvider } from 'react-router-dom';
-import router from './router';
-import { CartProvider, QuioscoProvider, AuthProvider } from './context';
 import { SWRConfig } from 'swr';
+import router from './router/app.router';
+import { CartProvider, QuioscoProvider, AuthProvider } from './context';
 
-const freshCoffeeApp = () => {
+const FreshApp = () => {
   return (
     <>
       <SWRConfig
@@ -24,4 +24,4 @@ const freshCoffeeApp = () => {
   );
 };
 
-export default freshCoffeeApp;
+export default FreshApp;

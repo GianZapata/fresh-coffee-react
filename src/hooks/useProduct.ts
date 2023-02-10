@@ -31,8 +31,8 @@ export const useProduct = ({
 
   // Función para incrementar o decrementar el contador
   const increaseBy = (value: number) => {
-    // Si el valor es negativo, lo pone en 0
-    let newValue = Math.max(counter + value, 0);
+    // Si el valor es negativo, lo pone en 1
+    let newValue = Math.max(counter + value, 1);
 
     // Si tiene un máximo de cantidad
     if (initialValues?.maxCount) {

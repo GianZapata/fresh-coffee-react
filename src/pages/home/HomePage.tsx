@@ -1,15 +1,24 @@
 import { CardProduct } from '../../components/pages/home/CardProduct';
 import { useProducts } from '../../hooks/useProducts';
+import { MainLayout } from '../../layouts/MainLayout';
 
 export const HomePage = () => {
   const { isLoading, products, currentCategory } = useProducts();
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-screen">
+        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+      </div>
+    );
+  }
 
   return (
-    <>
-      <h1 className="text-4xl font-black">{currentCategory?.name}</h1>
-      <p className="text-2xl my-10">
+    <MainLayout>
+      <h1 className="text-4xl font-black text-center">
+        {currentCategory?.name}
+      </h1>
+      <p className="text-2xl my-10 text-center">
         Elige y personaliza tu pedido a continuación
       </p>
 
@@ -18,6 +27,6 @@ export const HomePage = () => {
           <CardProduct product={product} key={product.id} />
         ))}
       </div>
-    </>
+    </MainLayout>
   );
 };

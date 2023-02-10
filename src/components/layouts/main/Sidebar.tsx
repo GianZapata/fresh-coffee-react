@@ -1,14 +1,10 @@
 import { Category } from './Category';
-import { QuioscoContext } from '../../../context';
+import { QuioscoContext, AuthContext } from '../../../context';
 import { useContext } from 'react';
-import { useAuth } from '../../../hooks/useAuth';
 
 export const Sidebar = () => {
   const { categories } = useContext(QuioscoContext);
-
-  const { logoutUser, user } = useAuth({
-    middleware: 'auth',
-  });
+  const { user, logoutUser } = useContext(AuthContext);
 
   return (
     <aside className="md:w-72">
@@ -31,7 +27,7 @@ export const Sidebar = () => {
       <div className="my-5 px-5">
         <button
           type="button"
-          className="text-center bg-red-500 hover:bg-red-800 w-full p-3 font-bold text-white rounded-full transition duration-300"
+          className="text-center bg-red-600 hover:bg-red-800 w-full py-2 px-4 font-bold text-white rounded-full transition duration-500 ease-in-out transform hover:-translate-y-1 hover:scale-110 uppercase"
           onClick={logoutUser}
         >
           Cancelar orden
