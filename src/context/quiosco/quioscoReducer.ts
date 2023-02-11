@@ -1,6 +1,5 @@
 import { QuioscoState } from './';
-import { ICategory } from '../../interfaces/category.interface';
-import { IProduct } from '../../interfaces/product.interface';
+import { ICategory, IProduct } from '../../interfaces';
 
 type QuioscoActionType =
   | { type: '[Quiosco] - GetProducts' }

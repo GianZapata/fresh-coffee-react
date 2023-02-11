@@ -7,7 +7,7 @@ interface CategoryProps {
 }
 
 export const Category: FC<CategoryProps> = ({ category }) => {
-  const { name, icon_name } = category;
+  const { name, iconName } = category;
 
   const { setCurrentCategory, currentCategory } = useContext(QuioscoContext);
 
@@ -23,7 +23,7 @@ export const Category: FC<CategoryProps> = ({ category }) => {
       onClick={() => setCurrentCategory(category)}
     >
       <img
-        src={`/img/icono_${icon_name}.svg`}
+        src={`/img/icono_${iconName}.svg`}
         alt={`${name} icon`}
         className="w-12"
       />

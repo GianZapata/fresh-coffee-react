@@ -1,7 +1,16 @@
-import { FC, PropsWithChildren, useReducer, useEffect } from 'react';
+import {
+  FC,
+  PropsWithChildren,
+  useReducer,
+  useEffect,
+  useContext,
+} from 'react';
 import { toast } from 'react-toastify';
+import axios, { type AxiosError } from 'axios';
 import { CartContext, cartReducer } from './';
-import { ICartProduct } from '../../interfaces';
+import freshCoffeeApi from '../../api/freshApi';
+import { ICartProduct, IOrder } from '../../interfaces';
+import { AuthContext } from '../auth/AuthContext';
 
 export interface CartState {
   cart: ICartProduct[];
@@ -21,10 +30,14 @@ const CART_INITIAL_STATE: CartState = {
   tax: 0,
   total: 0,
 };
-const TAX = 0.15;
+
+const TAX_RATE = import.meta.env.VITE_TAX_RATE;
 
 export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
+  const accessToken = localStorage.getItem('accessToken');
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
+
+  const { logoutUser } = useContext(AuthContext);
 
   /** Actualizar el resumen del pedido */
   useEffect(() => {
@@ -38,7 +51,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
       0,
     );
 
-    const taxRate = Number(TAX);
+    const taxRate = Number(TAX_RATE || 0);
 
     const tax = subTotal * taxRate;
     const total = tax + subTotal;
@@ -82,6 +95,65 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     dispatch({ type: '[Cart] - Remove Product In Cart', payload: product });
   };
 
+  const createOrder = async (): Promise<{
+    hasError: boolean;
+    message: string;
+  }> => {
+    const bodyOrder = {
+      //   paymentResult: '',
+      //   shippingAddress: state.shippingAddress,
+      numberOfItems: state.numberOfItems,
+      subTotal: state.subTotal,
+      tax: state.tax,
+      total: state.total,
+      isPaid: false,
+      orderItems: state.cart.map((product) => ({
+        productId: product.id,
+        quantity: product.quantity,
+        price: product.price,
+      })),
+    };
+
+    try {
+      const { data } = await freshCoffeeApi.post<IOrder>(
+        '/api/orders',
+        bodyOrder,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        },
+      );
+
+      toast.success('Orden creada con éxito, en breve será procesada');
+
+      dispatch({ type: '[Cart] - Order Complete' });
+
+      setTimeout(() => {
+        logoutUser();
+      }, 3000);
+
+      return {
+        hasError: false,
+        message: data.id.toString(),
+      };
+    } catch (err) {
+      if (axios.isAxiosError(err)) {
+        const error = err as AxiosError<{ message: string }>;
+        return {
+          hasError: true,
+          message:
+            error.response?.data.message ||
+            'Hubo un error al crear la orden, intente nuevamente',
+        };
+      }
+      return {
+        hasError: true,
+        message: 'Error no controlado, hable con el administrador',
+      };
+    }
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -89,6 +161,7 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         /** Methods */
         addProductToCart,
         removeProductInCart,
+        createOrder,
       }}
     >
       {children}

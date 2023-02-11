@@ -1,13 +1,11 @@
 import { Link } from 'react-router-dom';
-import { useRef, useContext, useState } from 'react';
+import { useRef, useState } from 'react';
 import freshCoffeeApi from '../../api/freshApi';
 
 import { Alert } from '../../components/ui/Alert';
 import { AuthErrorResponse, AuthResponse } from '../../interfaces';
 
 export const SignupPage = () => {
-  // const {} = useContext(AuthContext);
-
   const [errors, setErrors] = useState<AuthErrorResponse>();
 
   const nameRef = useRef<HTMLInputElement>(null);

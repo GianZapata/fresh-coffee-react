@@ -105,8 +105,10 @@ export const LoginPage = () => {
           </div>
           <button
             type="submit"
-            className={`flex justify-center items-center bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold  rounded-md transition duration-300 ${
-              isSending ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+            className={`flex justify-center items-center bg-indigo-600 hover:bg-indigo-800 text-white w-full mt-5 p-3 uppercase font-bold rounded-md transition duration-300 ${
+              isSending
+                ? 'opacity-50 cursor-not-allowed'
+                : 'cursor-pointer transform hover:-translate-y-1 hover:scale-110 '
             }`}
             disabled={isSending}
           >

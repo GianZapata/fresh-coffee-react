@@ -26,7 +26,7 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
 
   const showProductModal = (id: number) => {
     if (!id) return;
-    const product = state.filteredProducts.find((product) => product.id === id);
+    const product = state.products.find((product) => product.id === id);
     if (!product) return;
     dispatch({
       type: '[Quiosco] - SetShowProductModal',
@@ -67,7 +67,7 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
   const filterProductsByCategory = (category: ICategory) => {
     if (!category) return;
     const filteredProducts = state.products.filter(
-      (product) => product.category_id === category.id,
+      (product) => product.categoryId === category.id,
     );
     dispatch({
       type: '[Quiosco] - SetFilteredProducts',
@@ -81,7 +81,8 @@ export const QuioscoProvider: FC<PropsWithChildren> = ({ children }) => {
 
   useEffect(() => {
     if (state.categories.length > 0) {
-      setCurrentCategory(state.categories[0]);
+      const firstCategory = state.categories[0];
+      setCurrentCategory(firstCategory);
     }
   }, [state.categories]);
 

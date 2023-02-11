@@ -9,14 +9,14 @@ export interface AuthState {
 }
 
 const AUTH_INITIAL_STATE: AuthState = {
-  isLoggedIn: !!localStorage.getItem('access_token'),
+  isLoggedIn: !!localStorage.getItem('accessToken'),
   user: JSON.parse(localStorage.getItem('user') || 'null') || null,
 };
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, AUTH_INITIAL_STATE);
 
-  const accessToken = localStorage.getItem('access_token');
+  const accessToken = localStorage.getItem('accessToken');
 
   const loginUser = async (
     email: string,
@@ -28,7 +28,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         { email, password },
       );
       const { token, user } = data;
-      localStorage.setItem('access_token', token);
+      localStorage.setItem('accessToken', token);
       localStorage.setItem('user', JSON.stringify(user));
       dispatch({ type: '[Auth] - Login', payload: user });
       return true;
@@ -48,7 +48,7 @@ export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {
         userValues,
       );
       const { token, user } = data;
-      localStorage.setItem('access_token', token);
+      localStorage.setItem('accessToken', token);
       dispatch({ type: '[Auth] - Login', payload: user });
       return {
         hasError: false,

@@ -4,7 +4,7 @@ export interface IProduct {
   price: number;
   image: string;
   available: boolean;
-  category_id: number;
+  categoryId: number;
   created_at?: string;
   updated_at: string;
 }

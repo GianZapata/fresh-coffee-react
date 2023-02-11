@@ -1,17 +1,22 @@
-import { useContext, useMemo } from 'react';
+import { useContext, useMemo, FormEvent } from 'react';
 import { CartContext } from '../../../context';
 import { SummaryProduct } from './SummaryProduct';
 import { formatPrice } from '../../../helpers/format-price';
 
 export const Summary = () => {
-  const { cart, total } = useContext(CartContext);
+  const { cart, total, createOrder } = useContext(CartContext);
 
   const isCartEmpty = useMemo(() => cart.length === 0, [cart]);
 
+  const onCreateOrder = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    createOrder();
+  };
+
   return (
     <aside className="md:w-72 h-screen overflow-y-scroll p-5">
-      <h1 className="text-4xl font-black">Mi pedido</h1>
-      <p className="text-lg my-5">
+      <h1 className="text-4xl font-black text-center">Mi pedido</h1>
+      <p className="text-lg my-5 text-center">
         Aquí podrás ver el resumen y total de tu pedido
       </p>
       <div className="py-10">
@@ -28,7 +33,7 @@ export const Summary = () => {
       <p className="text-xl mt-10">
         Total: {''} {formatPrice(total)}
       </p>
-      <form className="w-full">
+      <form className="w-full" onSubmit={onCreateOrder}>
         <div className="mt-5">
           <button
             type="submit"
@@ -37,7 +42,6 @@ export const Summary = () => {
                 ? 'bg-indigo-100'
                 : 'bg-indigo-600 hover:bg-indigo-800'
             }`}
-            onClick={() => console.log('Confirmar pedido')}
             disabled={isCartEmpty}
           >
             Confirmar pedido
