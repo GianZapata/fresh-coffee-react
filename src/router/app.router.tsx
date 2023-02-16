@@ -1,7 +1,13 @@
-import { createBrowserRouter } from 'react-router-dom';
-import { AuthLayout } from '../layouts';
-import { LoginPage, HomePage, SignupPage } from '../pages';
-import { PrivateRoute, PublicRoute } from '.';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
+import { AuthLayout, AdminLayout } from '../layouts';
+import { PrivateRoute, PublicRoute, AdminRoute } from '.';
+import {
+  LoginPage,
+  HomePage,
+  SignupPage,
+  OrdersPage,
+  ProductsPage,
+} from '../pages';
 
 const AppRouter = createBrowserRouter([
   {
@@ -25,6 +31,25 @@ const AppRouter = createBrowserRouter([
       {
         path: 'signup',
         element: <PublicRoute component={SignupPage} />,
+      },
+    ],
+  },
+  {
+    path: '/admin',
+    element: <AdminLayout />,
+    children: [
+      {
+        index: true,
+        path: 'orders',
+        element: <AdminRoute component={OrdersPage} />,
+      },
+      {
+        path: 'products',
+        element: <AdminRoute component={ProductsPage} />,
+      },
+      {
+        path: '*',
+        element: <Navigate to="/admin/orders" />,
       },
     ],
   },
