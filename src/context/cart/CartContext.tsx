@@ -17,6 +17,8 @@ interface ContextProps {
     hasError: boolean;
     message: string;
   }>;
+  completeOrder: (id: number) => void;
+  setAvailableProduct: (id: number) => Promise<void>;
 }
 
 export const CartContext = createContext({} as ContextProps);

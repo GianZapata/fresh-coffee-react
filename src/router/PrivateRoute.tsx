@@ -10,12 +10,16 @@ export const PrivateRoute: FC<PropsPrivateRoute> = ({
   component: Component,
   ...rest
 }) => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const { pathname, search } = useLocation();
 
   const lastPath = pathname + search;
   localStorage.setItem('lastPath', lastPath);
 
-  return isLoggedIn ? <Component {...rest} /> : <Navigate to="/auth/login" />;
+  return user && user.id ? (
+    <Component {...rest} />
+  ) : (
+    <Navigate to="/auth/login" />
+  );
 };

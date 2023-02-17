@@ -1,16 +1,9 @@
-import {
-  FC,
-  PropsWithChildren,
-  useReducer,
-  useEffect,
-  useContext,
-} from 'react';
+import { FC, PropsWithChildren, useReducer, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios, { type AxiosError } from 'axios';
 import { CartContext, cartReducer } from './';
 import freshCoffeeApi from '../../api/freshApi';
 import { ICartProduct, IOrder } from '../../interfaces';
-import { AuthContext } from '../auth/AuthContext';
 
 export interface CartState {
   cart: ICartProduct[];
@@ -36,8 +29,6 @@ const TAX_RATE = import.meta.env.VITE_TAX_RATE;
 export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
   const accessToken = localStorage.getItem('accessToken');
   const [state, dispatch] = useReducer(cartReducer, CART_INITIAL_STATE);
-
-  const { logoutUser } = useContext(AuthContext);
 
   /** Actualizar el resumen del pedido */
   useEffect(() => {
@@ -129,10 +120,6 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
 
       dispatch({ type: '[Cart] - Order Complete' });
 
-      setTimeout(() => {
-        logoutUser();
-      }, 3000);
-
       return {
         hasError: false,
         message: data.id.toString(),
@@ -154,6 +141,26 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
     }
   };
 
+  const completeOrder = async (id: number) => {
+    try {
+      await freshCoffeeApi.put(`/api/orders/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    } catch (error) {}
+  };
+
+  const setAvailableProduct = async (id: number) => {
+    try {
+      await freshCoffeeApi.put(`/api/products/${id}`, null, {
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      });
+    } catch (error) {}
+  };
+
   return (
     <CartContext.Provider
       value={{
@@ -162,6 +169,8 @@ export const CartProvider: FC<PropsWithChildren> = ({ children }) => {
         addProductToCart,
         removeProductInCart,
         createOrder,
+        completeOrder,
+        setAvailableProduct,
       }}
     >
       {children}

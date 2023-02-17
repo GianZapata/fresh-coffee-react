@@ -6,13 +6,11 @@ import { AuthResponse, IUser } from '../../interfaces';
 export interface AuthState {
   isLoggedIn: boolean;
   user: IUser | null;
-  isAdmin: boolean;
 }
 
 const AUTH_INITIAL_STATE: AuthState = {
   isLoggedIn: !!localStorage.getItem('accessToken'),
   user: JSON.parse(localStorage.getItem('user') || 'null') || null,
-  isAdmin: false,
 };
 
 export const AuthProvider: FC<PropsWithChildren> = ({ children }) => {

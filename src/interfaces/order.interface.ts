@@ -1,3 +1,4 @@
+import { IUser, IProduct } from '.';
 export interface IOrder {
   id: number;
   created_at: string;
@@ -8,4 +9,6 @@ export interface IOrder {
   total: number;
   updated_at: string;
   userId: number;
+  user?: IUser;
+  products: IProduct[];
 }

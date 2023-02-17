@@ -10,14 +10,14 @@ export const AdminRoute: FC<PropsPrivateRoute> = ({
   component: Component,
   ...rest
 }) => {
-  const { isLoggedIn, isAdmin } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
   const { pathname, search } = useLocation();
 
   const lastPath = pathname + search;
   localStorage.setItem('lastPath', lastPath);
 
-  return isLoggedIn && isAdmin ? (
+  return user && user.id && user?.isAdmin ? (
     <Component {...rest} />
   ) : (
     <Navigate to="/auth/login" />
