@@ -1,6 +1,8 @@
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { AuthLayout, AdminLayout } from '../layouts';
 import { PrivateRoute, PublicRoute, AdminRoute } from '.';
+import { MainLayout } from '../layouts/MainLayout';
+import { Error404Page } from '../pages/shared/Error404Page';
 import {
   LoginPage,
   HomePage,
@@ -12,6 +14,7 @@ import {
 const AppRouter = createBrowserRouter([
   {
     path: '/',
+    element: <MainLayout />,
     children: [
       {
         index: true,
@@ -52,6 +55,10 @@ const AppRouter = createBrowserRouter([
         element: <Navigate to="/admin/orders" />,
       },
     ],
+  },
+  {
+    path: '*',
+    element: <Error404Page />,
   },
 ]);
 export default AppRouter;

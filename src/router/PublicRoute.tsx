@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
-import { AuthContext } from '../context';
 import { Navigate } from 'react-router-dom';
+import { AuthContext } from '../context';
 
 interface PropsPublicRoute {
   component: FC;
@@ -10,7 +10,7 @@ export const PublicRoute: FC<PropsPublicRoute> = ({
   component: Component,
   ...rest
 }) => {
-  const { isLoggedIn } = useContext(AuthContext);
+  const { user } = useContext(AuthContext);
 
-  return isLoggedIn ? <Navigate to="/" /> : <Component {...rest} />;
+  return user && user.id ? <Navigate to="/" /> : <Component {...rest} />;
 };

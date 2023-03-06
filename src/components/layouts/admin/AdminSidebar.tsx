@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faTruck, faTag, faSpinner } from '@fortawesome/free-solid-svg-icons';
 import { AuthContext } from '../../../context';
@@ -15,17 +15,32 @@ export const AdminSidebar = () => {
         <img src="/img/logo.svg" alt="Imagen Logotipo" className="w-40" />
       </div>
       <nav className="flex flex-col">
-        <Link
+        <NavLink
           to={'/admin/orders'}
-          className="bg-gray-200 font-bold text-lg hover:bg-gray-300 py-2 px-4 rounded-full transition duration-500 ease-in-out uppercase"
+          className={({ isActive }) =>
+            `font-bold text-lg  py-2 px-4 ${
+              isActive
+                ? 'bg-yellow-600 text-slate-900'
+                : 'text-slate-900 hover:bg-gray-200'
+            }`
+          }
         >
           <FontAwesomeIcon icon={faTruck} />
-          Pedidos
-        </Link>
-        <Link to={'/admin/products'} className="font-bold text-lg">
+          <span className="ml-2">Pedidos</span>
+        </NavLink>
+        <NavLink
+          to={'/admin/products'}
+          className={({ isActive }) =>
+            `font-bold text-lg  py-2 px-4 ${
+              isActive
+                ? 'bg-yellow-600 text-slate-900'
+                : 'text-slate-900 hover:bg-gray-200'
+            }`
+          }
+        >
           <FontAwesomeIcon icon={faTag} />
-          Productos
-        </Link>
+          <span className="ml-2">Productos</span>
+        </NavLink>
       </nav>
       <div className="my-5 px-5">
         <button
